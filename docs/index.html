@@ -1,0 +1,153 @@
+<html>
+
+<head>
+    <title>DouYinSparkFlow 配置生成器</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="./static/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./static/css/element-plus/index.css" />
+    <link rel="stylesheet" href="./static/css/main.css" />
+    <script src="./static/js/icons-vue.js"></script>
+    <script src="./static/js/vue.global.js"></script>
+    <script src="./static/js/element-plus.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <el-container style="height: calc(100% - 40px);">
+            <el-header>
+                <div class="page-header">
+                    <img src="./static/favicon.ico" alt="Logo" class="logo" />
+                    <span class="text-large font-600 ml-3"> DouYinSparkFlow 配置生成器 </span>
+                </div>
+            </el-header>
+            <el-container style="height: calc(100% - 100px);">
+                <el-aside width="550px">
+                    <div>
+                        <el-card>
+                            <template #header>
+                                <div class="card-header">
+                                    <span>CONFIG 配置预览</span>
+                                </div>
+                            </template>
+                            <pre style="max-height: 500px; overflow: auto; background: #f5f7fa; padding: 16px; border-radius: 8px; font-size: 13px; white-space: pre-wrap; word-break: break-all;">{{ configJSON }}</pre>
+                        </el-card>
+
+                        <el-button type="primary" style="width: 100%; margin-top: 16px;" @click="copyConfig">
+                            <template #icon>
+                                <i class="icon"><svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M618.666667 277.333333a128 128 0 0 1 128 128v384a128 128 0 0 1-128 128H234.666667a128 128 0 0 1-128-128V405.333333a128 128 0 0 1 128-128z m170.666666-170.666666a128 128 0 0 1 127.914667 123.2L917.333333 234.666667v384a128 128 0 0 1-123.2 127.914666L789.333333 746.666667v-85.333334a42.666667 42.666667 0 0 0 42.56-39.466666L832 618.666667V234.666667a42.666667 42.666667 0 0 0-39.466667-42.56L789.333333 192H405.333333a42.666667 42.666667 0 0 0-42.56 39.466667L362.666667 234.666667h-85.333334a128 128 0 0 1 123.2-127.914667L405.333333 106.666667h384z" fill="#ffffff"></path>
+                                </svg></i>
+                            </template>
+                            一键复制 CONFIG
+                        </el-button>
+                    </div>
+                </el-aside>
+                <el-main>
+                    <div class="main">
+                        <div class="base-config-form">
+                            <div class="section-header">
+                                <span class="text-large font-600">基础配置</span>
+                            </div>
+                            <el-form :model="form" label-width="auto" style="max-width: 600px">
+                                <el-form-item label="消息模板">
+                                    <el-input v-model="form.MESSAGE_TEMPLATE" :rows="4" type="textarea" />
+                                </el-form-item>
+                                <el-form-item label="一言类型">
+                                    <el-checkbox-group v-model="form.HITOKOTO_TYPES">
+                                        <el-checkbox value="动画">动画</el-checkbox>
+                                        <el-checkbox value="漫画">漫画</el-checkbox>
+                                        <el-checkbox value="游戏">游戏</el-checkbox>
+                                        <el-checkbox value="文学">文学</el-checkbox>
+                                        <el-checkbox value="原创">原创</el-checkbox>
+                                        <el-checkbox value="来自网络">来自网络</el-checkbox>
+                                        <el-checkbox value="影视">影视</el-checkbox>
+                                        <el-checkbox value="诗词">诗词</el-checkbox>
+                                        <el-checkbox value="哲学">哲学</el-checkbox>
+                                        <el-checkbox value="抖机灵">抖机灵</el-checkbox>
+                                        <el-checkbox value="其他">其他</el-checkbox>
+                                    </el-checkbox-group>
+                                </el-form-item>
+                                <el-form-item label="账号匹配模式">
+                                    <el-select v-model="form.MATCH_MODE" :options="match_mode_options" />
+                                </el-form-item>
+                                <el-form-item label="群聊匹配模式">
+                                    <el-select v-model="form.GROUP_MATCH_MODE" :options="group_match_mode_options" />
+                                </el-form-item>
+                                <el-form-item label="浏览器操作最长等待时间">
+                                    <el-input-number v-model="form.BROWSER_TIMEOUT" :step="1000" :precision="0"
+                                        :min="5000" :max="300000" />
+                                </el-form-item>
+                                <el-form-item label="好友列表等待时间">
+                                    <el-input-number v-model="form.FRIEND_LIST_WAIT_TIME" :step="1000" :precision="0"
+                                        :min="1000" :max="120000" />
+                                </el-form-item>
+                                <el-form-item label="任务重试次数">
+                                    <el-input-number v-model="form.TASK_RETRY_TIMES" :step="1" step-strictly
+                                        :precision="0" :min="1" :max="5" />
+                                </el-form-item>
+                                <el-form-item label="输出日志级别">
+                                    <el-select v-model="form.LOG_LEVEL" :options="log_level_options" />
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <div class="account-config-form">
+                            <div class="section-header">
+                                <span class="text-large font-600">账户配置</span>
+                            </div>
+                            <div class="account-item" v-for="(account, index) in form.ACCOUNTS" :key="index">
+                                <el-form :model="form" label-width="auto" style="max-width: 600px">
+                                    <el-form-item label="用户名">
+                                        <el-input v-model="account.username" />
+                                    </el-form-item>
+                                    <el-form-item label="抖音号">
+                                        <el-input v-model="account.unique_id" />
+                                    </el-form-item>
+                                    <el-form-item label="Cookies【JSON格式】">
+                                        <el-input v-model="account.cookies" :rows="4" type="textarea" />
+                                    </el-form-item>
+                                    <el-form-item label="目标好友（回车）">
+                                        <el-input-tag v-model="account.targets" :tag-type="info" :tag-effect="plain"
+                                            placeholder="Please input">
+                                            <template #tag="{ value }">
+                                                <div class="flex items-center">
+                                                    <span>{{ value }}</span>
+                                                </div>
+                                            </template>
+                                        </el-input-tag>
+                                    </el-form-item>
+                                    <el-form-item label="目标群聊（回车）">
+                                        <el-input-tag v-model="account.groups" :tag-type="success" :tag-effect="plain"
+                                            placeholder="请输入群名称">
+                                            <template #tag="{ value }">
+                                                <div class="flex items-center">
+                                                    <span>{{ value }}</span>
+                                                </div>
+                                            </template>
+                                        </el-input-tag>
+                                    </el-form-item>
+                                    <el-button type="danger"
+                                        :style="{ width: '100%', margin: '20px auto' , display: form.ACCOUNTS.length <= 1 ? 'none' : 'block'}"
+                                        @click="removeAccount(index)">移除</el-button>
+                                </el-form>
+                            </div>
+                            <div class="action">
+                                <el-button type="primary" style="width: 80%; margin: 20px auto;" @click="addAccount">
+                                    <template #icon>
+                                        <i class="icon"><svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M105 480a8 8 0 0 1 8-8h799a8 8 0 0 1 8 8v64a8 8 0 0 1-8 8H113a8 8 0 0 1-8-8v-64z" fill="#ffffff"></path>
+                                            <path d="M480 920a8 8 0 0 1-8-8V112a8 8 0 0 1 8-8h64a8 8 0 0 1 8 8v800a8 8 0 0 1-8 8h-64z" fill="#ffffff"></path>
+                                        </svg></i>
+                                    </template>
+                                    添加账户
+                                </el-button>
+                            </div>
+                        </div>
+                    </div>
+                </el-main>
+            </el-container>
+        </el-container>
+    </div>
+</body>
+<script src="./static/js/main.js"></script>
+
+</html>
