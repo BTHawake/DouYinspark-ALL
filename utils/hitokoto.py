@@ -44,5 +44,16 @@ def request_hitokoto():
         if theFromWho is None or theFromWho.strip() == "":
             theFromWho = "滚木作者"
         return f"{data['hitokoto']} —— {theFrom} ({theFromWho})"
+        # if theFrom is not None and theFrom.strip() != "":
+        #     From=theFrom.strip()
+        # elif theFromWho is not None and theFromWho.strip() != "":
+        #     From=theFromWho.strip()
+        # elif creator is not None and creator.strip() != "404NOTFOUND":
+        #     From=creator.strip()
+        # else:
+        #     From="滚木来源"
+        #
+        # return f"{data['hitokoto']} —— {From}"
     except Exception as e:
-        return "[error] 获取失败滚木内容"
+        return "[error] 获取失败,滚木内容"
+
