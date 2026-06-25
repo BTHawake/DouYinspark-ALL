@@ -39,7 +39,7 @@
 
 **GitHub Actions（推荐）：**
 
-Fork 仓库 → Settings → Secrets and Variables → Actions → 新建 Secret，名称为 `CONFIG`，粘贴 JSON → 手动触发一次 workflow ,每天早上9点自动运行，高峰期间可能会有延迟。
+Fork 仓库 → Settings → Secrets and Variables → Actions → 新建 Secret，名称为 `CONFIG`，粘贴 JSON → 手动触发一次 workflow ,每天早上5点和下午2点自动运行，高峰期间可能会有延迟。
 
 **本地运行：**
 
